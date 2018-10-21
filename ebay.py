@@ -37,12 +37,12 @@ class Offer:
 def _collect_all_products(isbn):
     params = {"productId": isbn}
     params.update(base_params)
-    response_data = requests.get(url, params).json()
-    results = response_data["findItemsByProductResponse"][0]["searchResult"][0]["item"]
-    while response_data["pageNumber"] < response_data["totalPages"]:
+    response_data = requests.get(url, params).json()["findItemsByProductResponse"][0]
+    results = response_data["searchResult"][0]["item"]
+    while response_data["paginationOutput"][0]["pageNumber"] < response_data["paginationOutput"][0]["totalPages"]:
         params['paginationInput.pageNumber'] += 1
-        response_data = requests.get(url, params).json()
-        results += response_data["findItemsByProductResponse"][0]["searchResult"][0]["item"]
+        response_data = requests.get(url, params).json()["findItemsByProductResponse"][0]
+        results += response_data["searchResult"][0]["item"]
     return [Offer(data) for data in results]
 
 

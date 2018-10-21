@@ -5,7 +5,7 @@ from ebay import find_offers
 
 
 while True:
-    with open("books.json") as file:
+    with open("input.json") as file:
         books_input = json.loads(file.read())
     offers = [find_offers(b["isbn"], b["price"]) for b in books_input]
 
