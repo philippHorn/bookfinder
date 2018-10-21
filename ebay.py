@@ -18,12 +18,12 @@ base_params = {
 
 class Offer:
     def __init__(self, data):
-        self.price = data["sellingStatus"]["convertedCurrentPrice"][0]["__value__"]
+        self.price = data["sellingStatus"][0]["convertedCurrentPrice"][0]["__value__"]
         assert data["sellingStatus"]["convertedCurrentPrice"][0]["@currencyId"] == "EUR"
         self.listing_types = [info["listingType"][0] for info in data["listingInfo"]]
 
         # we assume all listing types have same date for now:
-        end_date = data["listingInfo"][0]["listingType"][0]
+        end_date = data["listingInfo"][0]["endTime"][0]
         self.end_date = datetime.strptime(end_date, "%Y-%m-%dT%H:%M:%S.%fZ")
 
         self.url = data['viewItemURL']
