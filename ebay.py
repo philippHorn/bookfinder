@@ -18,16 +18,16 @@ base_params = {
 
 class Offer:
     def __init__(self, data):
-        self.price = data["sellingStatus"][0]["convertedCurrentPrice"][0]["__value__"]
-        assert data["sellingStatus"]["convertedCurrentPrice"][0]["@currencyId"] == "EUR"
+        self.price = float(data["sellingStatus"][0]["convertedCurrentPrice"][0]["__value__"])
+        assert data["sellingStatus"][0]["convertedCurrentPrice"][0]["@currencyId"] == "EUR"
         self.listing_types = [info["listingType"][0] for info in data["listingInfo"]]
 
         # we assume all listing types have same date for now:
         end_date = data["listingInfo"][0]["endTime"][0]
         self.end_date = datetime.strptime(end_date, "%Y-%m-%dT%H:%M:%S.%fZ")
 
-        self.url = data['viewItemURL']
-        self.title = data["title"]
+        self.url = data['viewItemURL'][0]
+        self.title = data["title"][0]
 
     @property
     def is_auction(self):
@@ -48,12 +48,12 @@ def _collect_all_products(isbn):
 
 def find_offers(isbn, price):
     offers = _collect_all_products(isbn)
-    offers = [offer for offer in offers if offer.price > price]
+    offers = [offer for offer in offers if offer.price < price]
 
     # if there are auctions, only include them if there is one day left till they end
     offers = [
         offer for offer in offers
-        if not offer.is_auction and (offer.end_date - datetime.now()) > timedelta(days=2)
+        if not (offer.is_auction and offer.end_date - datetime.now() > timedelta(days=2))
     ]
     return offers
 
