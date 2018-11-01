@@ -1,5 +1,6 @@
 import json
 import time
+import mail
 
 from ebay import find_offers
 
@@ -18,6 +19,9 @@ while True:
         offers_found.add(o.url)
     if offers:
         body = "\n".join("\n".join((offer.title, offer.url, str(offer.price))) for offer in offers)
+        if body:
+            mail.send(body.encode())
+        print ("Books found:")
         print (body)
     time.sleep(60 * 5)
 

@@ -11,7 +11,6 @@ base_params = {
     'SERVICE-VERSION': '1.0.0',
     'OPERATION-NAME': 'findItemsByProduct',
     'productId.@type': "ISBN",
-    'productId': '0300188374',
     'paginationInput.pageNumber': 1,
 }
 
@@ -38,6 +37,8 @@ def _collect_all_products(isbn):
     params = {"productId": isbn}
     params.update(base_params)
     response_data = requests.get(url, params).json()["findItemsByProductResponse"][0]
+    if int(response_data["searchResult"][0]["@count"]) == 0:
+        return []
     results = response_data["searchResult"][0]["item"]
     while response_data["paginationOutput"][0]["pageNumber"] < response_data["paginationOutput"][0]["totalPages"]:
         params['paginationInput.pageNumber'] += 1
